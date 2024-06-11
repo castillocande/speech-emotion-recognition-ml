@@ -1,0 +1,1 @@
+Acá ponemos los archivos con las arquitecturas de los distintos modelos, hiperparámetros

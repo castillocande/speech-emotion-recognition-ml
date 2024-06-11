@@ -1,0 +1,2 @@
+con egemaps podemos sacar distintos features. Nosotros agarramos el de 88, pero hay uno de 6000 y un par más creo. 
+Probablemente funcionan peor, pero está bueno para agregarlo al informe. 
