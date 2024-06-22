@@ -1,1 +1,3 @@
-n_trees = 100
+type = "RF"
+n_estimators = 200
+max_depth = 7

@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import soundfile as sf
 from sklearn.model_selection import GroupShuffleSplit, train_test_split
-import torch
 
 
 class DataLoader:
