@@ -17,7 +17,7 @@ class CNN(nn.Module):
         self.fc3 = nn.Linear(2048, 8)  # 8 classes for output
 
     def forward(self, x):
-        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv1(x)) # input: 224*224
         x = self.avgpool1(x)
         x = F.relu(self.conv2(x))
         x = self.avgpool2(x)

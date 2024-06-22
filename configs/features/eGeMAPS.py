@@ -1,3 +1,4 @@
+name = "egemaps"
 feature = "egemaps"
 version = "eGeMAPSv02" # eGeMAPSv01, eGeMAPSv02 ComParE_2016
 level = "lld" # lld, functionals
