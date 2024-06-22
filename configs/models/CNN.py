@@ -1,1 +1,2 @@
+name = "CNN"
 type = "NN"

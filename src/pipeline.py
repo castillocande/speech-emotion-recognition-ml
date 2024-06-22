@@ -1,40 +1,15 @@
 import os
-import datetime
+import importlib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
-import pickle
+from files import create_results_folder
 
 
-# def read_results_file():
-    # config_filename = 'random_forest_config.pkl'
-    # base_directory_path = r"results\random_forest\RAVDESS\egemaps"
-    # config_path = os.path.join(base_directory_path, config_filename)
-
-    # with open(config_path, 'rb') as f:
-    #     loaded_config = pickle.load(f)
-
-    # print("Loaded configuration:")
-    # for key, value in loaded_config.items():
-    #     print(f"{key}: {value}")
-
-
-def create_results_folder(*config_settings): # recibe model_config, data_config y features_config
-    names = [config_settings[i].name for i in range(len(config_settings))]
-    base = os.path.join("results", *names)
-    now = datetime.datetime.now()
-    os.makedirs(base, exist_ok=True)
-    for param in config_settings:
-        configs = {}
-        for setting in dir(param):
-            configs[setting] = getattr(param, setting)
-        with open(os.path.join(base, f'{param.name}_config.pkl'), 'wb') as f:
-            pickle.dump(configs, f, protocol=pickle.HIGHEST_PROTOCOL)
-    with open(os.path.join(base, 'run_date.txt'), 'w') as f:
-        f.write(str(now))
-        f.close
-    # read_results_file()
-    return base
-
+def load_model(model_config):
+    model_module = importlib.import_module(f"src.models.{model_config.name}")
+    model = getattr(model_module, model_config.name)(model_config)
+    model = model.to(model_config.device)
+    return model
 
 
 def run_experiment(model_config, data_config, features_config):

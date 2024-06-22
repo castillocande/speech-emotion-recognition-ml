@@ -1,1 +1,2 @@
+name = "LSTMClassifier"
 type = "NN"
