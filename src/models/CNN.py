@@ -52,32 +52,6 @@ class CNN:
             zoom_range=0.2,
             horizontal_flip=True
         )
-        neutral_datagen = ImageDataGenerator(
-            rescale=1./255,
-            validation_split=0.125,
-            shear_range=0.4,
-            zoom_range=0.4,
-            horizontal_flip=True,
-            rotation_range=20,
-            width_shift_range=0.2,
-            height_shift_range=0.2
-        )
-        # neutral_generator = neutral_datagen.flow_from_directory(
-        #     train_dir,
-        #     target_size=(self.img_width, self.img_height),
-        #     batch_size=self.batch_size,
-        #     class_mode='categorical',
-        #     subset='training',
-        #     classes=['neutral']
-        # )
-        # other_generator = train_datagen.flow_from_directory(
-        #     train_dir,
-        #     target_size=(self.img_width, self.img_height),
-        #     batch_size=self.batch_size,
-        #     class_mode='categorical',
-        #     subset='training',
-        #     classes=[c for c in os.listdir(train_dir) if c != 'neutral']
-        # )
         train_generator = tf.keras.preprocessing.image.DirectoryIterator(
             directory=train_dir,
             image_data_generator=train_datagen,
@@ -93,6 +67,7 @@ class CNN:
             class_mode='categorical',
             subset='validation'
         )
+        
         self.model.fit(
             train_generator,
             steps_per_epoch=train_generator.samples // self.batch_size,
