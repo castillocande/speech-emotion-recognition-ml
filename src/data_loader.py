@@ -13,7 +13,7 @@ class DataLoader:
         print("se inicializo")
         pass
 
-    def segment_audio2(self, audio, num_parts, top_db=30):
+    def segment_audio2(self, audio, num_frames, top_db=30):
         # Recortar los silencios
         #print("")
         #print("audio largo", len(audio))
@@ -24,10 +24,10 @@ class DataLoader:
         #    plt.plot(audio)
         #    plt.show()
         #    print(audio)
-        segment_length = len(trimmed_audio) // num_parts
+        segment_length = len(trimmed_audio) // num_frames
         segments = []
 
-        for i in range(num_parts):
+        for i in range(num_frames):
             start = i * segment_length
             end = (i + 1) * segment_length
             segment = trimmed_audio[start:end]
@@ -80,8 +80,8 @@ class DataLoader:
         print('guardo los actores en,', actors_save_path)
         return np.load(save_path)
 
-    def get_dataset(self, dataset_path_list):
-        n_segments = int(os.path.basename(dataset_path_list[0])[0])
+    def get_dataset(self, dataset_path_list, n_segments):
+        #n_segments = int(os.path.basename(dataset_path_list[0])[0])
         dataset = np.load(dataset_path_list[0])
         actors_path = define_actors_path(dataset_path_list[0])
         print(actors_path)

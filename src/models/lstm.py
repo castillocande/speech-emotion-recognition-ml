@@ -137,13 +137,13 @@ class rnnLSTM():
 """
 
 class rnnLSTM():
-    def __init__(self, X_train, y_train, lr=0.001, patience=3, dropout_rate=0.5, momentum=0.9):
+    def __init__(self, X_train, y_train, lr = 0.001, patience = 3, dropout_rate = 0.5, momentum = 0.9):
         self.early_stopping = EarlyStopping(monitor='val_loss', patience=patience, restore_best_weights=True)
         self.model = Sequential()
-        self.model.add(LSTM(128, return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2])))
+        self.model.add(LSTM(128, return_sequences=False, input_shape=(X_train.shape[1], X_train.shape[2])))
         self.model.add(Dropout(dropout_rate))
-        self.model.add(LSTM(128, return_sequences=False))
-        self.model.add(Dropout(dropout_rate))
+        #self.model.add(LSTM(128, return_sequences=False))
+        #self.model.add(Dropout(dropout_rate))
         self.model.add(Dense(128, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(0.01)))
         self.model.add(Dropout(dropout_rate))
         self.model.add(Dense(y_train.shape[1], activation='softmax'))
