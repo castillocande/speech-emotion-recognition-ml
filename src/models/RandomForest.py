@@ -37,9 +37,7 @@ class RandomForest:
         acc = accuracy_score(y_valid, val_predictions)
         print(f"Validation Accuracy: {acc}")
         return acc
-
-
-
+    
     def predict(self, X):
         X_shape = X.shape
         if len(X_shape) == 3:
