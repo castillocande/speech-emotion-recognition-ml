@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from files import create_results_folder
 
+
 def load_model(model_config):
     model_module = importlib.import_module(f"src.models.{model_config.name}")
     model = getattr(model_module, model_config.name)(model_config)
