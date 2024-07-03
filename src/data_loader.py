@@ -20,10 +20,10 @@ class DataLoader:
         trimmed_audio, _ = librosa.effects.trim(audio, top_db=top_db)
 
         #print("trimmed largo", len(trimmed_audio))
-        if len(trimmed_audio) == len(audio):
-            plt.plot(audio)
-            plt.show()
-            print(audio)
+        #if len(trimmed_audio) == len(audio):
+        #    plt.plot(audio)
+        #    plt.show()
+        #    print(audio)
         segment_length = len(trimmed_audio) // num_parts
         segments = []
 
