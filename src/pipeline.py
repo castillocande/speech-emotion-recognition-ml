@@ -17,10 +17,10 @@ def run_experiment(model_config, data_config, features_config):
 
     elif model_config.type == "NN":
         model = load_model(model_config)
-        if model_config.name == "CNN":
+        if model_config.name == "RNN":
+            pass
+        elif model_config.name == "CNN":
             model.compile_model()
             model.train(data_config.train_dir)
             model.evaluate(data_config.test_dir)
-        if model_config.name == "RNN":
-            pass
     
