@@ -482,8 +482,7 @@ def run_experiment(model_config, data_config, features_config):
     )
 
     if model_config.type == "NN":
-        input_shape = X_train.shape[1:]
-        model = load_model(model_config, input_shape)
+        model = load_model(model_config, model_config.input_dim)
 
         if isinstance(model, CNNModel):
             model.compile_model()

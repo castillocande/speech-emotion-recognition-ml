@@ -1,7 +1,4 @@
-import os
 import importlib
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
 from files import create_results_folder
 
 
@@ -19,6 +16,11 @@ def run_experiment(model_config, data_config, features_config):
         pass
 
     elif model_config.type == "NN":
-        pass
-
+        model = load_model(model_config, model_config.input_dim)
+        if model_config.name == "CNN":
+            model.compile_model()
+            model.train(data_config.train_dir, data_config.val_dir)
+            model.evaluate(data_config.test_dir)
+        if model_config.name == "RNN":
+            pass
     
