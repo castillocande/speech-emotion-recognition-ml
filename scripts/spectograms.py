@@ -17,6 +17,7 @@ emotion_labels = {
 
 
 def extract_spectrogram(audio_path, sr=22050, n_mels=224, fmax=8000):
+    """Extrae un espectrograma de un archivo de audio."""
     y, sr = librosa.load(audio_path, sr=sr)
     spectrogram = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=n_mels, fmax=fmax)
     log_spectrogram = librosa.power_to_db(spectrogram, ref=np.max)
@@ -24,6 +25,7 @@ def extract_spectrogram(audio_path, sr=22050, n_mels=224, fmax=8000):
 
 
 def save_spectrogram(spectrogram, save_path):
+    """Guarda un espectrograma en un archivo."""
     plt.figure(figsize=(5, 5))
     librosa.display.specshow(spectrogram, sr=22050, x_axis="time", y_axis="mel", fmax=8000)
     plt.axis("off")
@@ -32,11 +34,12 @@ def save_spectrogram(spectrogram, save_path):
 
 
 def process_files(files, output_path):
+    """Procesa archivos de audio y guarda sus espectrogramas en la ruta de salida especificada."""
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     for audio_path in files:
         filename = os.path.basename(audio_path)
-        emotion_code = filename.split('-')[2] 
+        emotion_code = filename.split('-')[2]
         emotion = emotion_labels.get(emotion_code, "unknown")
         class_dir = os.path.join(output_path, emotion)
         if not os.path.exists(class_dir):

@@ -1,30 +1,118 @@
-import torch.nn as nn
-import torch.nn.functional as F
+import matplotlib.pyplot as plt
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.layers import Conv2D, AveragePooling2D, Flatten, Dense, Input, Dropout
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import RMSprop
 
 
-class CNN(nn.Module):
-    def __init__(self):
-        super(CNN, self).__init__()
-        self.conv1 = nn.Conv2d(1, 8, kernel_size=3, padding=1)  # 1 input channel (grayscale), 8 output channels, 3x3 kernel size
-        self.avgpool1 = nn.AvgPool2d(kernel_size=2, stride=2)   # 2x2 average pooling
-        self.conv2 = nn.Conv2d(8, 16, kernel_size=3, padding=1) # 8 input channels, 16 output channels, 3x3 kernel size
-        self.avgpool2 = nn.AvgPool2d(kernel_size=2, stride=2)   # 2x2 average pooling
-        self.conv3 = nn.Conv2d(16, 32, kernel_size=3, padding=1) # 16 input channels, 32 output channels, 3x3 kernel size
-        self.avgpool3 = nn.AvgPool2d(kernel_size=2, stride=2)    # 2x2 average pooling
-        self.flatten = nn.Flatten()
-        self.fc1 = nn.Linear(32 * 28 * 28, 2048)  # 32 channels after pooling, 28x28 image size assumed here
-        self.fc2 = nn.Linear(2048, 2048)
-        self.fc3 = nn.Linear(2048, 8)  # 8 classes for output
+class CNN:
+    """Clase para definir, entrenar y evaluar el modelo CNN."""
 
-    def forward(self, x):
-        x = F.relu(self.conv1(x)) # input: 224*224
-        x = self.avgpool1(x)
-        x = F.relu(self.conv2(x))
-        x = self.avgpool2(x)
-        x = F.relu(self.conv3(x))
-        x = self.avgpool3(x)
-        x = self.flatten(x)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = F.softmax(self.fc3(x), dim=1)  # Softmax activation for multi-class classification
-        return x
+    def __init__(self, img_width=224, img_height=224, batch_size=32, epochs=50):
+        self.img_width = img_width
+        self.img_height = img_height
+        self.batch_size = batch_size
+        self.epochs = epochs
+        self.model = self.create_model((img_width, img_height, 3), 8)
+
+    def create_model(self, input_shape, num_classes):
+        """Crea el modelo CNN."""
+        inputs = Input(shape=input_shape)
+        x = Conv2D(8, (3, 3), activation="relu")(inputs)
+        x = AveragePooling2D((2, 2))(x)
+        x = Conv2D(16, (3, 3), activation="relu")(x)
+        x = AveragePooling2D((2, 2))(x)
+        x = Conv2D(32, (3, 3), activation="relu")(x)
+        x = AveragePooling2D((2, 2))(x)
+        x = Flatten()(x)
+        x = Dense(2048, activation="relu")(x)
+        x = Dropout(0.5)(x)
+        x = Dense(2048, activation="relu")(x)
+        x = Dropout(0.5)(x)
+        outputs = Dense(num_classes, activation="softmax")(x)
+        model = Model(inputs, outputs)
+        return model
+
+    def compile_model(self, learning_rate=0.0001, momentum=0.8):
+        """Compila el modelo."""
+        optimizer = RMSprop(learning_rate=learning_rate, momentum=momentum)
+        self.model.compile(optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"])
+
+    def train(self, train_dir, val_dir):
+        """Entrena el modelo usando los datos de entrenamiento y validación."""
+        train_datagen = ImageDataGenerator(
+            rescale=1./255,
+            validation_split=0.125,
+            shear_range=0.2,
+            zoom_range=0.2,
+            horizontal_flip=True
+        )
+
+        val_datagen = ImageDataGenerator(rescale=1./255, validation_split=0.125)
+
+        train_generator = train_datagen.flow_from_directory(
+            train_dir,
+            target_size=(self.img_width, self.img_height),
+            batch_size=self.batch_size,
+            class_mode="categorical",
+            subset="training"
+        )
+
+        val_generator = val_datagen.flow_from_directory(
+            val_dir,
+            target_size=(self.img_width, self.img_height),
+            batch_size=self.batch_size,
+            class_mode="categorical",
+            subset="validation"
+        )
+
+        self.model.fit(
+            train_generator,
+            steps_per_epoch=train_generator.samples // self.batch_size,
+            validation_data=val_generator,
+            validation_steps=val_generator.samples // self.batch_size,
+            epochs=self.epochs
+        )
+
+    def evaluate(self, test_dir):
+        """Evalúa el modelo usando los datos de prueba."""
+        test_datagen = ImageDataGenerator(rescale=1./255)
+        test_generator = test_datagen.flow_from_directory(
+            test_dir,
+            target_size=(self.img_width, self.img_height),
+            batch_size=self.batch_size,
+            class_mode="categorical"
+        )
+
+        test_loss, test_accuracy = self.model.evaluate(test_generator, steps=test_generator.samples // self.batch_size)
+        print(f"Test accuracy: {test_accuracy * 100:.2f}%")
+
+    def plot_learning_curves(self):
+        """Grafica las curvas de aprendizaje del entrenamiento y validación."""
+        history_dict = self.history.history
+        loss = history_dict["loss"]
+        val_loss = history_dict["val_loss"]
+        accuracy = history_dict["accuracy"]
+        val_accuracy = history_dict["val_accuracy"]
+
+        epochs = range(1, len(loss) + 1)
+
+        plt.figure(figsize=(14, 5))
+
+        plt.subplot(1, 2, 1)
+        plt.plot(epochs, loss, "bo", label="Training loss")
+        plt.plot(epochs, val_loss, "b", label="Validation loss")
+        plt.title("Training and validation loss")
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+        plt.legend()
+
+        plt.subplot(1, 2, 2)
+        plt.plot(epochs, accuracy, "bo", label="Training accuracy")
+        plt.plot(epochs, val_accuracy, "b", label="Validation accuracy")
+        plt.title("Training and validation accuracy")
+        plt.xlabel("Epochs")
+        plt.ylabel("Accuracy")
+        plt.legend()
+
+        plt.show()
