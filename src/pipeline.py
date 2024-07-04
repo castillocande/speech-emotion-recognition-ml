@@ -98,15 +98,18 @@ def run_experiment(model_config, data_config, features_config):
         y_test_ohe = aux_functions.one_hot_encoder(y_test)
         y_dev_ohe =aux_functions. one_hot_encoder(y_dev)
 
+        RNN_hyperparams_save_path = "./results/RNN_hyperparameters.npy" 
+        hyperparams = np.load(RNN_hyperparams_save_path)
+
         input_shape = (X_train.shape[1], X_train.shape[2])  
-        lstm_autoencoder_rnn = autoencoder_lstm.LSTM_Autoencoder_RNN(input_shape=input_shape)
+        lstm_autoencoder_rnn = autoencoder_lstm.LSTM_Autoencoder_RNN(input_shape=input_shape, lstm_units=128, dropout_rate=hyperparams[2], latent_dim=64)
         lstm_autoencoder_rnn.train_autoencoder(X_train, X_valid)
 
         X_train_encoded = lstm_autoencoder_rnn.transform(X_train)
         X_valid_encoded = lstm_autoencoder_rnn.transform(X_valid)
         X_test_encoded = lstm_autoencoder_rnn.transform(X_test)
 
-        lstm_autoencoder_rnn.train_rnn(X_train_encoded, y_train_ohe, X_valid_encoded, y_valid_ohe)
+        lstm_autoencoder_rnn.train_rnn(X_train_encoded, y_train_ohe, X_valid_encoded, y_valid_ohe, batch_size=int(hyperparams[0]))
         lstm_autoencoder_rnn.plot_learning_curves()
 
         print("test")
