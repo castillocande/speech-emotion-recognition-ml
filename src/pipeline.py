@@ -19,8 +19,7 @@ def run_experiment(model_config, data_config, features_config):
         if model_config.name == "RNN":
             pass
         elif model_config.name == "CNN":
-            # model.compile_model()
-            # model.train(data_config.train_dir)
-            # model.evaluate(data_config.test_dir)
-            pass
-    
+            model.create_model(model_config.input_shape, 8)
+            model.compile_model()
+            model.train_model()
+            model.evaluate_model()
