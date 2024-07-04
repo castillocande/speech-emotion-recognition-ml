@@ -1,2 +1,0 @@
-name = "LSTMClassifier"
-type = "NN"

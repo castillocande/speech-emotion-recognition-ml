@@ -1,12 +1,10 @@
 import importlib
 import numpy as np
-
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-
-
+from src.data_loader import DataLoader
 from src.files import create_results_folder
 from src import data_loader, aux_functions
-from models import RandomForest, lstm, autoencoder_lstm
+from src.models import RandomForest, lstm, autoencoder_lstm, cnn
 
 
 speech1_dataset_dev = "./data/1frame_Speech_dataset_dev.npy"
@@ -22,10 +20,6 @@ song1_dataset_test = "./data/1frame_Song_dataset_test.npy"
 song3_dataset_test = "./data/3frame_Song_dataset_test.npy"
 
 
-
-
-
-
 def run_experiment(model_config, data_config, features_config):
     create_results_folder(model_config, data_config, features_config)
 
@@ -36,7 +30,7 @@ def run_experiment(model_config, data_config, features_config):
         X_test, y_test, actors_test = DL.get_dataset([song1_dataset_test, speech1_dataset_test], 1)
         X_train, y_train = aux_functions.SMOTE_(X_train, y_train)
 
-        RF_hyperparams_save_path = "./configs/data/RF_hyperparameters.npy" 
+        RF_hyperparams_save_path = "./results/RF_hyperparameters.npy" 
         RF_hyperparams = np.load(RF_hyperparams_save_path, allow_pickle=True)
         RF = RandomForest.RandomForest(n_estimators=RF_hyperparams[0],
                              max_features=RF_hyperparams[1],
@@ -75,7 +69,7 @@ def run_experiment(model_config, data_config, features_config):
         y_test_ohe = aux_functions.one_hot_encoder(y_test)
         y_dev_ohe =aux_functions. one_hot_encoder(y_dev)
 
-        RNN_hyperparams_save_path = "configs/data/RNN_hyperparameters.npy" 
+        RNN_hyperparams_save_path = "./results/RNN_hyperparameters.npy" 
         hyperparams = np.load(RNN_hyperparams_save_path)
 
         RNN = lstm.rnnLSTM(X_train, y_train_ohe, lr=hyperparams[1], dropout_rate=hyperparams[2], patience=3, momentum=hyperparams[3])
@@ -89,7 +83,7 @@ def run_experiment(model_config, data_config, features_config):
 
 
     elif model_config.type == "AE_LSTM":
-
+        DL = data_loader.DataLoader()
         X_dev, y_dev, actors_dev = DL.get_dataset([song3_dataset_dev, speech3_dataset_dev], 3)
         X_train, X_valid, y_train, y_valid, actors_train, actors_valid = DL.split_dataset(X_dev, y_dev, test_size=0.2, actors=actors_dev)
         X_test, y_test, actors_test = DL.get_dataset([song3_dataset_test, speech3_dataset_test], 3)
@@ -121,5 +115,14 @@ def run_experiment(model_config, data_config, features_config):
 
 
     elif model_config.type == "CNN":
-        pass
+        train_dir = "data/spectrograms/combined"
+        test_dir = "data/spectrograms_test/combined"
+        input_shape = (224, 224, 3)
+        num_classes = 8
+    
+        cnn_model = cnn.CNN(train_dir, test_dir)
+        cnn_model.create_model(input_shape, num_classes)
+        cnn_model.compile_model()
+        cnn_model.train_model()
+        cnn_model.evaluate_model()
        

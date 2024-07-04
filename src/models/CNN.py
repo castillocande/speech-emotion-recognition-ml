@@ -8,9 +8,8 @@ from tensorflow.keras.optimizers import RMSprop
 
 
 class CNN:
-    def __init__(self, type, name, train_dir, test_dir, img_width=224, img_height=224, batch_size=32, seed_value=32, learning_rate=0.0001, momentum=0.8, epochs=50):
-        self.type = type
-        self.name = name
+    """Clase para definir, entrenar y evaluar un modelo CNN."""
+    def __init__(self, train_dir, test_dir, img_width=224, img_height=224, batch_size=32, seed_value=32, learning_rate=0.0001, momentum=0.8, epochs=50):
         self.train_dir = train_dir
         self.test_dir = test_dir
         self.img_width = img_width

@@ -1,8 +1,11 @@
+type = "CNN"
 name = "CNN"
-type = "NN"
-device = "cuda"
-input_dim = (224, 224, 3)
-learning_rate = 0.0001 
+train_dir = "data/spectrograms/combined"
+test_dir = "data/spectrograms_test/combined"
+img_width = 224
+img_height = 224
+batch_size=32
+seed_value = 32
+learning_rate=0.0001
 momentum = 0.8
 epochs = 50
-batch_size = 32

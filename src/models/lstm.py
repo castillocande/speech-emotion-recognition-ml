@@ -5,7 +5,6 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-
         
 class rnnLSTM():
     """Clase para definir, entrenar y evaluar el modelo RNN LSTM."""
