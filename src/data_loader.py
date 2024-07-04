@@ -83,9 +83,6 @@ class DataLoader:
         x = x.reshape(num_samples, n_segments, num_features)
         y = y.reshape(num_samples, n_segments).mean(axis=1).astype(int)
 
-        print(f"X shape {x.shape}")
-        print(f"y shape {y.shape}")
-        print(f"actors shape {actors.shape}")
         return x, y, actors
 
     def split_dataset(self, x, y, test_size=0.2, actors=[]):

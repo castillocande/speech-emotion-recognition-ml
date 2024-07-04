@@ -51,13 +51,4 @@ def process_files(files, output_path):
 
 
 if __name__ == "__main__":
-    dataset_path = "data/data_dev/combined"
-    output_path = "spectrograms/combined"
-    files = []
-    for root, dirs, filenames in os.walk(dataset_path):
-        for filename in filenames:
-            print(filename)
-            if filename.endswith(".wav"):
-                files.append(os.path.join(root, filename))
-
-    process_files(files, output_path)
+    pass
